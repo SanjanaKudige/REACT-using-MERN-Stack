@@ -3,6 +3,10 @@ import Paper from '@material-ui/core/Paper'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import { withStyles } from '@material-ui/core/styles'
+import { withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
+
+import { registerUser } from '../../actions/authActions'
 
 const styles = {
     TextField: {
@@ -24,7 +28,8 @@ class Register extends Component {
             email: '',
             login: '',
             password: '',
-            password2: ''
+            password2: '',
+            errors: {}
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -32,6 +37,11 @@ class Register extends Component {
 
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.errors) {
+            this.setState({ errors: nextProps.errors })
+        }
+    }
     handleChange(e) {
         this.setState({ [e.target.name]: e.target.value })
     }
@@ -44,10 +54,11 @@ class Register extends Component {
             password: this.state.password,
             password2: this.state.password2
         }
-        console.log(userData)
+        this.props.registerUser(userData, this.props.history)
     }
     render() {
         const { classes } = this.props;
+        const { errors } = this.state
         return (
             <Paper style={{ padding: 15 }}>
                 <form onSubmit={this.handleSubmit}>
@@ -58,6 +69,8 @@ class Register extends Component {
                         name="email"
                         value={this.state.email}
                         onChange={this.handleChange}
+                        helperText={errors.email ? errors.email : ''}
+                        error={errors.email ? true : false}
                     />
                     <TextField
                         label="Login"
@@ -66,6 +79,8 @@ class Register extends Component {
                         name="login"
                         value={this.state.login}
                         onChange={this.handleChange}
+                        helperText={errors.login ? errors.login : ''}
+                        error={errors.login ? true : false}
                     />
                     <TextField
                         label="Password"
@@ -74,6 +89,8 @@ class Register extends Component {
                         name="password"
                         value={this.state.password}
                         onChange={this.handleChange}
+                        helperText={errors.password ? errors.password : ''}
+                        error={errors.password ? true : false}
                     />
                     <TextField
                         label="Repeat Password"
@@ -82,6 +99,8 @@ class Register extends Component {
                         name="password2"
                         value={this.state.password2}
                         onChange={this.handleChange}
+                        helperText={errors.password2 ? errors.password2 : ''}
+                        error={errors.password2 ? true : false}
                     />
                     <div className={classes.btnBlock}>
                         <Button variant="outlined" type="submit"> Submit </Button>
@@ -92,5 +111,8 @@ class Register extends Component {
     }
 }
 
+const mapStateToProps = (state) => ({
+    errors: state.errors
+})
 
-export default withStyles(styles)(Register)
+export default connect(mapStateToProps, { registerUser })(withRouter(withStyles(styles)(Register)))
