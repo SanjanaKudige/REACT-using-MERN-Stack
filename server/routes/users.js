@@ -2,6 +2,8 @@ const router = require('express').Router()
 const User = require('../models/User')
 const validateRegisterInput = require('../validation/register')
 const bcrypt = require('bcryptjs')
+const validateLoginInput = require('../validation/login')
+const jwt = require('jsonwebtoken')
 
 router.route('/register')
     .post((req, res) => {
@@ -32,5 +34,38 @@ router.route('/register')
                 })
             })
     })
+
+router.route('/login')
+    .post((req, res) => {
+        const { errors, isValid } = validateLoginInput(req.body)
+
+        if (!isValid) {
+            return res.status(404).json(errors)
+        }
+
+        User.findOne({ email: req.body.email })
+            .then(user => {
+                if (user) {
+                    bcrypt.compare(req.body.password, user.password)
+                        .then(isMatch => {
+                            if (isMatch) {
+                                const token = jwt.sign({ id: user._id }, process.env.SECRET, { expiresIn: '1d' }, function (err, token) {
+                                    return res.json({
+                                        success: true,
+                                        token: token
+                                    })
+                                })
+                            } else {
+                                errors.password = 'Password is incorrect'
+                                return res.status(404).json(errors)
+                            }
+                        })
+                } else {
+                    errors.email = 'User/Email not found'
+                    return res.status(404).json(errors)
+                }
+            })
+    })
+
 
 module.exports = router
