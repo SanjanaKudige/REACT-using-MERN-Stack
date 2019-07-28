@@ -4,6 +4,7 @@ const validateRegisterInput = require('../validation/register')
 const bcrypt = require('bcryptjs')
 const validateLoginInput = require('../validation/login')
 const jwt = require('jsonwebtoken')
+const passport = require('passport')
 
 router.route('/register')
     .post((req, res) => {
@@ -66,6 +67,19 @@ router.route('/login')
                 }
             })
     })
+
+
+router.route('/')
+    .get(passport.authenticate('jwt', { session: false }), (req, res) => {
+        res.join({
+            _id: req.user._id,
+            email: req.user.email,
+            login: req.user.login,
+            followers: req.user.followers,
+            following: req.user.following
+        })
+    })
+
 
 
 module.exports = router
