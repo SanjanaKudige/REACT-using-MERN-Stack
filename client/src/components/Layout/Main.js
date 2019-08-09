@@ -1,7 +1,7 @@
 import React from 'react'
 import Grid from "@material-ui/core/Grid"
 import Header from './Header'
-// import Footer from './Footer'
+import Footer from './Footer'
 
 
 
@@ -13,7 +13,7 @@ const Main = ({ children }) => (
                 {children}
             </Grid>
         </Grid>
-        {/* <Footer /> */}
+        <Footer />
     </div>
 )
 

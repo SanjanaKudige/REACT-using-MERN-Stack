@@ -34,11 +34,22 @@ class Login extends Component {
 
     }
 
+    componentDidMount() {
+        if (this.props.auth.isAuthenticated) {
+            this.props.history.push('/')
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.errors) {
             this.setState({ errors: nextProps.errors })
         }
+
+        if (nextProps.auth.isAuthenticated) {
+            this.props.history.push('/')
+        }
     }
+
     handleChange(e) {
         this.setState({ [e.target.name]: e.target.value })
     }
@@ -52,6 +63,7 @@ class Login extends Component {
         // console.log(userData)
         this.props.loginUser(userData)
     }
+
     render() {
         const { classes } = this.props;
         const { errors } = this.state

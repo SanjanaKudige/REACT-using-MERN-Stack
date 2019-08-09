@@ -1,7 +1,23 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
-const Home = () => (
-    <div>this is home page</div>
-)
+import ListPost from './Posts/ListPost'
+import Login from './Auth/Login'
 
-export default Home
+class Home extends Component {
+
+    render() {
+        const { isAuthenticated } = this.props
+        return (
+            <div>
+                {isAuthenticated ? <ListPost /> : <Login />}
+            </div>
+        )
+    }
+}
+
+const mapStateToProps = (state) => ({
+    isAuthenticated: !!state.auth.isAuthenticated
+})
+
+export default connect(mapStateToProps)(Home)
