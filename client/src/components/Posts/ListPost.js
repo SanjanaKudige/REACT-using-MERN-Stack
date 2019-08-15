@@ -20,7 +20,11 @@ class ListPost extends Component {
         this.setState({ allPosts: event.target.checked })
 
     }
-    componentDidMount(prevProps, prevState) {
+
+    componentDidMount() {
+        this.props.getPosts()
+    }
+    componentDidUpdate(prevProps, prevState) {
         if (prevState.allPosts !== this.state.allPosts) {
             this.state.allPosts
                 ? this.props.getPosts()
